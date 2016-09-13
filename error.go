@@ -1,8 +1,12 @@
 package otto
 
 import (
-	"errors"
+	//	"errors"
 	"fmt"
+	"os"
+
+	"github.com/fatih/color"
+	"github.com/go-errors/errors"
 
 	"github.com/robertkrimen/otto/file"
 )
@@ -223,6 +227,11 @@ func (rt *_runtime) panicRangeError(argumentList ...interface{}) *_exception {
 func catchPanic(function func()) (err error) {
 	defer func() {
 		if caught := recover(); caught != nil {
+			color.Set(color.FgHiRed)
+
+			fmt.Fprintf(os.Stderr, "err recovered %s \n\n", errors.Wrap(caught, 2).ErrorStack())
+			color.Unset()
+
 			if exception, ok := caught.(*_exception); ok {
 				caught = exception.eject()
 			}
